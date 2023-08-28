@@ -1,7 +1,7 @@
 import express from 'express';
-import blogRoutes from './modules/blog/index/blog.index';
-import authRoutes from './modules/user/index/auth.index';
-import userRoutes from './modules/user/index/user.index';
+import authRoutes from './modules/user/auth.index';
+import blogRoutes from './modules/blog/blog.index';
+import userRoutes from './modules/user/user.index';
 
 export default (app: express.Application): void => {
   authRoutes(app);
