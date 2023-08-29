@@ -1,10 +1,26 @@
-import { CONSTANT_RESPONSE, LOGICAL_ERRORS } from '../core/utils/constant';
+import {
+  CONSTANT_RESPONSE,
+  LOGICAL_ERRORS,
+  PAGINATION,
+} from '../core/utils/constant';
 import UserCollection from './user.collection';
 import { UpdateProfile, UserId } from './user.interface';
 
 const getUsers = async () => {
   try {
-    const users = UserCollection.find();
+    const aggregate = UserCollection.aggregate([
+      {
+        $project: {
+          username: 1,
+          role: 1,
+        },
+      }
+    ])
+    const paginate = {
+      page: PAGINATION.PAGE,
+      limit: PAGINATION.LIMIT,
+    };
+    const users = await UserCollection.aggregatePaginate(aggregate, paginate);
 
     return users;
   } catch (error) {

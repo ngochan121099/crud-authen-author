@@ -2,29 +2,24 @@ import { newEnforcer, Enforcer, Adapter } from 'casbin';
 import { MongooseAdapter } from 'casbin-mongoose-adapter';
 import path from 'path';
 
-class Casbin {
-  static instance: Casbin;
-  static addPolicy: any;
-  static enforce: any;
+const model = path.resolve(__dirname, './casbin_model.conf');
 
-  async initializeCasbin() {
-    const model = path.resolve(__dirname, './casbin_model.conf');
-    const adapter: Adapter = await MongooseAdapter.newAdapter(
-      `${process.env.MONGODB_URI}`
-    );
-    const enforcer: Enforcer = await newEnforcer(model, adapter);
-    return enforcer;
-  }
+export const initializeCasbin = async () => {
+  const adapter: Adapter = await MongooseAdapter.newAdapter(
+    `${process.env.MONGODB_URI}`
+  );
 
-  async enforce(sub: string, obj: string, role: string) {
-    const enforcer: Enforcer = await this.initializeCasbin();
-    return await enforcer.enforce(sub, obj, role);
-  }
+  const enforcer: Enforcer = await newEnforcer(model, adapter);
+  return enforcer;
+};
 
-  async addPolicy(sub: string, obj: string, role: string) {
-    const enforcer: Enforcer = await this.initializeCasbin();
-    return await enforcer.addPolicy(sub, obj, role);
-  }
-}
+export const enforce = async (sub: string, obj: string, role: string) => {
+  const enforcer: Enforcer = await initializeCasbin();
+  return await enforcer.enforce(sub, obj, role);
+};
 
-export default Casbin;
+export const addPolicy = async (sub: string, obj: string, role: string) => {
+  const enforcer: Enforcer = await initializeCasbin();
+
+  return await enforcer.addPolicy(sub, obj, role);
+};

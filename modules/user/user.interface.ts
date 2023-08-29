@@ -1,5 +1,3 @@
-import { Schema } from "mongoose";
-
 export interface UserList {
   username?: string;
   password: string;

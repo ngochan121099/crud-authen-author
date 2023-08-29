@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
 import { Types } from 'mongoose';
-import Casbin from '../casbin/casbin'
+import * as rbac from '../casbin/casbin'
 import { LOGICAL_ERRORS } from '../utils/constant';
 import UserCollection from '../../user/user.collection';
 dotenv.config();
@@ -51,9 +51,8 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
             const obj = req.path;
             const method = req.method;
             const act = action[method];
-            Casbin.addPolicy(sub, obj, decoded.role);
-
-            const checkRole = Casbin.enforce(sub, obj, act);
+            rbac.addPolicy(sub, obj, decoded.role);
+            const checkRole = rbac.enforce(sub, obj, act);
             if (!checkRole) {
               return res.status(403).json(LOGICAL_ERRORS.UNAUTHORIZATION);
             }
